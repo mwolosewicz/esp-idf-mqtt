@@ -1,0 +1,45 @@
+menu "MQTT Manager Configuration"
+
+    config MQTT_PUBLISHING_QUEUE_SIZE
+        int "Publishing queue size"
+        default 10
+        help
+          The size of the queue used to store messages to be published.
+
+    config MAX_SUBSCRIBED_TOPICS
+        int "Maximum number of subscribed topics"
+        default 10
+        help
+          The maximum number of topics that can be subscribed to.
+
+    config MAX_TOPIC_LENGTH
+        int "Maximum topic length"
+        default 100
+        help
+          The maximum length of a topic.
+
+    config MAX_MESSAGE_LENGTH
+        int "Maximum message length"
+        default 200
+        help
+          The maximum length of a message.
+
+    config BROKER_URL
+      string "Broker URL"
+      default "mqtt://mqtt.eclipseprojects.io"
+      help
+          Set the MQTT broker URL.
+
+    config BROKER_USER_NAME
+            string "User name to get to broker"
+            default "mqtt"
+            help
+                Set the MQTT broker user name.
+
+    config BROKER_PASSWORD
+            string "Password to get to broker"
+            default ""
+            help
+                Set the MQTT broker password.
+
+endmenu
