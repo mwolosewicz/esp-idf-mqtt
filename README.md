@@ -58,7 +58,7 @@ The parameters can be found in `MQTT Manager Configuration`.
 
 - *MAX_TOPIC_LENGTH*
 - *MAX_MESSAGE_LENGTH*
-- *MAX_SUBSCRIBED_TOPICS* - be careful here, this is quite memory consuming .
+- *MAX_SUBSCRIBED_TOPICS* - be careful here, this is quite memory consuming.
 - *BROKER_URL*
 - *BROKER_USER_NAME*
 - *BROKER_PASSWORD*
