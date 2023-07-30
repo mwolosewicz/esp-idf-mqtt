@@ -40,7 +40,6 @@ void mqtt_manager_unsubscribe(const char* topic);
 This function will allow you to unsubscribe from an MQTT topic.
 
 ## How to use
-
 1. Include the MQTT Manager header file in your code: `#include "mqtt_manager.h"`
 2. Call `mqtt_manager_init()` function to initialize the MQTT Manager.
 3. Call `mqtt_manager_subscribe()` function to subscribe to a topic and receive messages.
@@ -49,9 +48,11 @@ This function will allow you to unsubscribe from an MQTT topic.
 Please refer to the example code provided for detailed usage.
 
 ## Prerequisites
-Please use `idf.py menuconfig` to set the required parameters.
+### Choose your architecture
+Please choose your architecture, for ESP32-S3 use `idf.py set-target esp32s3`
 
 ### Config the MQTT Manager parameters
+Please use `idf.py menuconfig` to set the required parameters.
 
 The parameters can be found in `MQTT Manager Configuration`.
 
@@ -64,6 +65,7 @@ The parameters can be found in `MQTT Manager Configuration`.
 - *MQTT_PUBLISHING_QUEUE_SIZE*
 
 ### Setup WiFi connection
+Please use `idf.py menuconfig` to set the required parameters.
 
 The configuration of WiFi connection can be found in: `Example Connection Configuration` menu.
 
