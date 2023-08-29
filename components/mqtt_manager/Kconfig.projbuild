@@ -52,7 +52,6 @@ menu "MQTT Manager Configuration"
             bool "Enable TLS-PSK"
         	default false
         	help
-        		Allow to use secure channel to communicate with broker. Please note that key and hint should be
-                set in mqtt_manager_tls_psk.h file.
+        		Allow to use secure channel to communicate with broker. Please note that key and hint should be set in mqtt_manager_tls_psk.h file.
 
 endmenu
