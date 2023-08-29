@@ -28,11 +28,17 @@ menu "MQTT Manager Configuration"
       string "Broker URL"
       default "mqtt://mqtt.eclipseprojects.io"
       help
-          Set the MQTT broker URL.
+          Set the MQTT broker URL. Note that for TLS-PSK the protocol should be mqtts://
+
+    config BROKER_PORT
+            int "Broker port"
+            default 1883
+            help
+                Set the MQTT broker port.
 
     config BROKER_USER_NAME
             string "User name to get to broker"
-            default "mqtt"
+            default ""
             help
                 Set the MQTT broker user name.
 
@@ -41,5 +47,12 @@ menu "MQTT Manager Configuration"
             default ""
             help
                 Set the MQTT broker password.
+
+    config TLS_PSK
+            bool "Enable TLS-PSK"
+        	default false
+        	help
+        		Allow to use secure channel to communicate with broker. Please note that key and hint should be
+                set in mqtt_manager_tls_psk.h file.
 
 endmenu

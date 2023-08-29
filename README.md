@@ -12,6 +12,7 @@ No dynamic allocation - the size of queues and other stuff can be configured usi
 - Unsubscribe from MQTT topics.
 - Handle MQTT messages and topics in a simplified way.
 - Manage MQTT topics subscriptions.
+- Connect to MQTT broker using TLS-PSK.
 
 ## API
 ### MQTT Manager Initialization
@@ -60,9 +61,58 @@ The parameters can be found in `MQTT Manager Configuration`.
 - *MAX_MESSAGE_LENGTH*
 - *MAX_SUBSCRIBED_TOPICS* - be careful here, this is quite memory consuming.
 - *BROKER_URL*
+- *BROKER_PORT*
 - *BROKER_USER_NAME*
 - *BROKER_PASSWORD*
 - *MQTT_PUBLISHING_QUEUE_SIZE*
+- *TLS_PSK*
+
+#### **NOTE** about TLS_PSK:
+
+- If the TLS_PSK is set, then the KEY and HINT should be set in mqtt_manager_tls_psk.h file.
+- The protocol in menuconfig for TLS-PSK connection should be set to `mqtts://` instead of `mqtt://`, so use address
+`mqtts://test.mosquitto.org` instead of `mqtt://test.mosquitto.org`
+- Usually the port number for secure connection is 8883.
+- The ESP-TLS should be enabled in menuconfig to use TLS-PSK.
+
+#### Configure of Mosquitto broker for TLS-PSK connection
+Below you can find the example configuration of mosquitto broker for TLS-PSK connection.
+```
+$cat conf.d/psk.conf
+per_listener_settings true
+
+# Listener for Internet connections on port 8883 with PSK
+listener 8883
+psk_hint hint
+psk_file /etc/mosquitto/psk.txt
+allow_anonymous true
+
+# Listener for local network connections on port 1883 without PSK
+listener 1883
+allow_anonymous true
+```
+
+And the psk.txt file:
+```
+$cat psk.txt 
+psk_identity:70a3c4271ceacd2d6dc1b0418b7e85fc
+```
+
+The `psk_identity` is a kind of user name, and the `psk_identity` is a key used to get into the broker. The file can
+contain more than one user name and key, which can be used to easier manage the access to the broker. For example
+you can use a MAC address or unique ID instead of `psk_identity` to identify the device.
+
+For generation of the key you can use the following command: `openssl rand -hex 16` which will generate a 128-bit key.
+Which should be enough for most of the cases.
+
+For more advanced security you should use the full TLS implementation. The TLS-PSK is fast and easy to setup, but it
+is not the most secure way to go.
+
+There is nothing against using the TLS-PSK and the user name and password at the same time to level up security a
+little bit.
+
+Here you can read about [configuration of Mosquitto broker](https://www.howtoforge.com/how-to-install-mosquitto-mqtt-message-broker-on-debian-11/)
+in more details.
 
 ### Setup WiFi connection
 Please use `idf.py menuconfig` to set the required parameters.

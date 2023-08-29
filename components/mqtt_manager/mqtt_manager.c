@@ -3,6 +3,7 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "mqtt_client.h"
+#include "esp_tls.h"
 
 #include "mqtt_manager.h"
 
@@ -15,6 +16,13 @@ static esp_mqtt_client_handle_t s_client = NULL;
 static char s_subscribed_topics[CONFIG_MAX_SUBSCRIBED_TOPICS][CONFIG_MAX_TOPIC_LENGTH];
 static QueueHandle_t s_subscription_queues[CONFIG_MAX_SUBSCRIBED_TOPICS];
 
+#if CONFIG_TLS_PSK
+static const psk_hint_key_t psk_hint_key = {
+        .key = MQTT_TLS_PSK_KEY,
+        .key_size = sizeof(s_key),
+        .hint = MQTT_TLS_PSK_IDENTITY
+};
+#endif // CONFIG_TLS_PSK
 
 static void mqtt_publisher_task(void *pvParameters) {
     MqttPublishMessage_t msg;
@@ -91,11 +99,9 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGD(TAG, "MQTT_EVENT_CONNECTED");
-            // TODO: Implement if needed.
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGD(TAG, "MQTT_EVENT_DISCONNECTED");
-            // TODO: Implement if needed.
             break;
         case MQTT_EVENT_SUBSCRIBED:
             ESP_LOGD(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
@@ -105,11 +111,9 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             break;
         case MQTT_EVENT_PUBLISHED:
             ESP_LOGD(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
-            // TODO: Implement if needed.
             break;
         case MQTT_EVENT_ERROR:
             ESP_LOGE(TAG, "MQTT_EVENT_ERROR");
-            // TODO: Implement if needed.
             break;
         case MQTT_EVENT_DATA:
             ESP_LOGD(TAG, "MQTT_EVENT_DATA");
@@ -117,11 +121,9 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             break;
         case MQTT_EVENT_BEFORE_CONNECT:
             ESP_LOGD(TAG, "MQTT_EVENT_BEFORE_CONNECT");
-            // TODO: Implement if needed.
             break;
         default:
             ESP_LOGD(TAG, "Other event id:%d", event->event_id);
-            // TODO: Implement if needed.
             break;
     }
     return ESP_OK;
@@ -137,15 +139,21 @@ static void mqtt_app_start(void)
     esp_mqtt_client_config_t mqtt_cfg = {
             .broker = {
                     .address = {
-                            .uri = CONFIG_BROKER_URL
+                            .uri = CONFIG_BROKER_URL,
+                            .port = CONFIG_BROKER_PORT,
+                    },
+#if CONFIG_TLS_PSK
+                    .verification = {
+                        .psk_hint_key = &psk_hint_key  // Assign the address of your psk_hint_key
                     }
+#endif // CONFIG_TLS_PSK
             },
             .credentials = {
                     .username = CONFIG_BROKER_USER_NAME,
                     .authentication = {
                             .password = CONFIG_BROKER_PASSWORD,
                     }
-            }
+            },
     };
 
     s_client = esp_mqtt_client_init(&mqtt_cfg);
